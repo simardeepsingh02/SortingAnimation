@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting Algorithm Visualizer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .navbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .navbar button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .navbar button:hover {
+            background-color: #45a049;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        .array-container {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .array-element {
+            width: 50px;
+            height: 50px;
+            background-color: #2196F3;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.3s ease, transform 0.5s ease;
+            position: relative;
+        }
+
+        .array-element.active {
+            background-color: #ff9800;
+        }
+
+        .array-element.swap {
+            background-color: #e91e63;
+        }
+
+        .array-element.pivot {
+            background-color: #4CAF50;
+        }
+
+        .array-element.active.bubble-active {
+            background-color: #ffeb3b;
+        }
+
+        .array-element.active.selection-active {
+            background-color: #21f341;
+        }
+
+        .array-element.active.selection-activepoint {
+            background-color: #f37921;
+        }
+
+        .array-element.active.selection-activeselect {
+            background-color: #e0e055;
+        }
+
+        .array-element.active.insertion-active {
+            background-color: #9c27b0;
+        }
+
+        .array-element.active.insertion-activepoint {
+            background-color: #f37921;
+        }
+
+        .array-element.active.insertion-activeselect {
+            background-color: #55e065;
+        }
+
+        .array-element.active.quick-active {
+            background-color: #4CAF50;
+        }
+
+        .array-element.active.merge-active {
+            background-color: #f44336;
+        }
+
+        .array-element.swap {
+            background-color: #e91e63 !important;
+        }
+
+        .array-element.pivot {
+            background-color: #4CAF50 !important;
+        }
+
+        .array-element.quick-pivot {
+            background-color: #4CAF50 !important;
+            transform: scale(1.2);
+        }
+
+        .array-element.party {
+            background-color: #af4c59;
+
+        }
+
+        .array-element.quick-compare {
+            background-color: #FFC107 !important;
+        }
+
+        .array-element.quick-boundary {
+            background-color: #9C27B0 !important;
+        }
+
+        /* Merge Sort specific colors */
+        .array-element.merge-left {
+            background-color: #f3b821 !important;
+        }
+
+        .array-element.merge-right {
+            background-color: #4CAF50 !important;
+        }
+
+        .array-element.merging {
+            border: 3px solid #ff5722;
+            box-sizing: border-box;
+        }
+
+        .array-element.sorted {
+            background-color: #8BC34A !important;
+        }
+
+        /* Explanation section */
+        .explanation {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <button onclick="bubbleSort()">Bubble Sort</button>
+        <button onclick="selectionSort()">Selection Sort</button>
+        <button onclick="insertionSort()">Insertion Sort</button>
+        <button onclick="quickSort()">Quick Sort</button>
+        <button onclick="mergeSort()">Merge Sort</button>
+    </div>
+
+    <div class="controls">
+        <input type="number" id="arrayElement" min="1" max="100">
+        <button onclick="addElement()">Add Element</button>
+        <button onclick="generateRandom()">Generate Random</button>
+        <button onclick="resetArray()">Reset</button>
+        <span id="arraySize"></span>
+    </div>
+
+    <div id="visualization" class="array-container"></div>
+    <div class="explanation" id="algorithmExplanation"></div>
+
+    <script>
+        let array = [];
+        const maxSize = 15;
+        let delayTime = 500;
+        let isSorting = false;
+        let currentTimeout = null;
+        const explanations = {
+    bubble: `
+        <h3>Bubble Sort</h3>
+        <p>Repeatedly steps through the list, compares adjacent elements, 
+        and swaps them if they are in the wrong order.</p>
+        <p>Time Complexity: O(n²)</p>
+        <pre><code class="java">public static void bubbleSort(int[] arr) {
+    int n = arr.length;
+    for (int i = 0; i < n-1; i++) {
+        for (int j = 0; j < n-i-1; j++) {
+            if (arr[j] > arr[j+1]) {
+                // Swap elements
+                int temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+            }
+        }
+    }
+}</code></pre>
+    `,
+    selection: `
+        <h3>Selection Sort</h3>
+        <p>Divides the input list into two parts: sorted and unsorted. 
+        Repeatedly selects the smallest element from the unsorted portion 
+        and moves it to the sorted portion.</p>
+        <p>Time Complexity: O(n²)</p>
+        <pre><code class="java">public static void selectionSort(int[] arr) {
+    int n = arr.length;
+    for (int i = 0; i < n-1; i++) {
+        int minIndex = i;
+        for (int j = i+1; j < n; j++) {
+            if (arr[j] < arr[minIndex]) {
+                minIndex = j;
+            }
+        }
+        // Swap elements
+        int temp = arr[minIndex];
+        arr[minIndex] = arr[i];
+        arr[i] = temp;
+    }
+}</code></pre>
+    `,
+    insertion: `
+        <h3>Insertion Sort</h3>
+        <p>Builds the final sorted array one item at a time by repeatedly 
+        inserting the next element into the proper position in the already-sorted portion.</p>
+        <p>Time Complexity: O(n²)</p>
+        <pre><code class="java">public static void insertionSort(int[] arr) {
+    int n = arr.length;
+    for (int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}</code></pre>
+    `,
+    quick: `
+        <h3>Quick Sort</h3>
+        <p>Divide-and-conquer algorithm that selects a 'pivot' element and 
+        partitions the array around the pivot, placing smaller elements 
+        before it and larger elements after it.</p>
+        <p>Time Complexity: O(n log n) average case</p>
+        <pre><code class="java">public static void quickSort(int[] arr, int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+private static int partition(int[] arr, int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+    for (int j = low; j < high; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            // Swap elements
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+    // Swap pivot to correct position
+    int temp = arr[i + 1];
+    arr[i + 1] = arr[high];
+    arr[high] = temp;
+    return i + 1;
+}</code></pre>
+    `,
+    merge: `
+        <h3>Merge Sort</h3>
+        <p>Divide-and-conquer algorithm that divides the input array into 
+        two halves, sorts them recursively, and then merges the sorted halves.</p>
+        <p>Time Complexity: O(n log n)</p>
+        <pre><code class="java">public static void mergeSort(int[] arr, int l, int r) {
+    if (l < r) {
+        int m = l + (r - l) / 2;
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+}
+
+private static void merge(int[] arr, int l, int m, int r) {
+    int n1 = m - l + 1;
+    int n2 = r - m;
+    int[] L = new int[n1];
+    int[] R = new int[n2];
+    
+    System.arraycopy(arr, l, L, 0, n1);
+    System.arraycopy(arr, m + 1, R, 0, n2);
+    
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            arr[k++] = L[i++];
+        } else {
+            arr[k++] = R[j++];
+        }
+    }
+    while (i < n1) arr[k++] = L[i++];
+    while (j < n2) arr[k++] = R[j++];
+}</code></pre>
+    `
+};
+        function stopSorting() {
+            isSorting = false;
+            if (currentTimeout) {
+                clearTimeout(currentTimeout);
+                currentTimeout = null;
+            }
+            // Reset all element classes
+            document.querySelectorAll('.array-element').forEach(element => {
+                element.className = 'array-element';
+            });
+        }
+        function showExplanation(algorithm) {
+            document.getElementById('algorithmExplanation').innerHTML = explanations[algorithm];
+        }
+        function updateVisualization() {
+            const container = document.getElementById('visualization');
+            container.innerHTML = '';
+            array.forEach((value, index) => {
+                const element = document.createElement('div');
+                element.className = 'array-element';
+                element.textContent = value;
+                element.id = `element-${index}`;
+                container.appendChild(element);
+            });
+            document.getElementById('arraySize').textContent = `Array Size: ${array.length}`;
+        }
+
+        async function addElement() {
+            stopSorting();
+            await sleep(1000)
+
+            isSorting = false;
+            if (array.length >= maxSize) return;
+            const value = parseInt(document.getElementById('arrayElement').value);
+            if (!isNaN(value)) {
+                array.push(value);
+                updateVisualization();
+            }
+        }
+
+        async function generateRandom() {
+            stopSorting();
+            await sleep(1000)
+            isSorting = false;
+            array = [];
+            while (array.length < maxSize) {
+                array.push(Math.floor(Math.random() * 100) + 1);
+            }
+            updateVisualization();
+        }
+
+        function resetArray() {
+            array = [];
+            updateVisualization();
+        }
+
+        function delay() {
+            return new Promise(resolve => setTimeout(resolve, delayTime));
+        }
+        let currentAlgorithm = 'bubble';
+        // ... (keep other variables) ... 
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        async function bubbleSort() {
+            stopSorting();
+            await sleep(1000)
+            isSorting = true;
+            currentAlgorithm = 'bubble';
+            showExplanation('bubble');
+            const len = array.length;
+            for (let i = 0; i < len; i++) {
+                if (!isSorting) break;
+                for (let j = 0; j < len - i - 1; j++) {
+                    if (!isSorting) break;
+                    highlightElements(0, j, j + 1);
+                    await delay();
+                    if (array[j] > array[j + 1]) {
+                        await swapElements(j, j + 1);
+                    }
+                    unhighlightElements(j, j + 1);
+                }
+            }
+            isSorting = false
+        }
+
+        async function selectionSort() {
+            await stopSorting();
+            await sleep(1000)
+            isSorting = true;
+
+            currentAlgorithm = 'selection';
+            showExplanation('selection');
+            const len = array.length;
+            for (let i = 0; i < len; i++) {
+                if (!isSorting) break;
+                let min = i;
+                highlightElements(1, min);
+                for (let j = i + 1; j < len; j++) {
+                    if (!isSorting) break;
+                    highlightElements(0, j);
+
+                    await delay();
+
+                    unhighlightElements(j);
+                    if (array[j] < array[min]) {
+                        if (!isSorting) break;
+                        if (min != i)
+                            unhighlightElements(min);
+                        min = j;
+                        highlightElements(2, min);
+                        await delay();
+                    }
+                }
+                if (!isSorting) break;
+                if (min !== i) await swapElements(i, min);
+                unhighlightElements(i);
+            }
+            isSorting = false;
+        }
+
+        async function insertionSort() {
+            stopSorting();
+            await sleep(1000)
+            isSorting = true;
+            currentAlgorithm = 'insertion';
+            showExplanation('insertion');
+            const len = array.length;
+            for (let i = 1; i < len; i++) {
+                let key = array[i];
+                let j = i - 1;
+                if (!isSorting) break;
+                highlightElements(0, i);
+                await delay();
+                
+                while (j >= 0 && array[j] > key) {
+                    if (!isSorting) break;
+                    highlightElements(1, j);
+                    highlightElements(2, j + 1);
+                    await delay();
+                    await swapElements(j + 1, j);
+                    highlightElements(0, i);
+                    j--;
+                }
+                unhighlightElements(i);
+            }
+            isSorting = false
+        }
+
+
+        function highlightElements(x, ...indices) {
+            if (x === 0) {
+                indices.forEach(i => {
+                    const element = document.getElementById(`element-${i}`);
+                    if (element) element.classList.add('active', `${currentAlgorithm}-active`);
+                });
+            } else if (x === 1) {
+                indices.forEach(i => {
+                    const element = document.getElementById(`element-${i}`);
+                    if (element) element.classList.add('active', `${currentAlgorithm}-activepoint`);
+                });
+            } else if (x === 2) {
+                indices.forEach(i => {
+                    const element = document.getElementById(`element-${i}`);
+                    if (element) element.classList.add('active', `${currentAlgorithm}-activeselect`);
+                });
+            }
+
+        }
+
+        function unhighlightElements(...indices) {
+            indices.forEach(i => {
+                const element = document.getElementById(`element-${i}`);
+                if (element) element.classList.remove(
+                    'active', 'swap', 'pivot',
+                    'bubble-active', 'selection-active', 'insertion-active',
+                    'quick-active', 'merge-active'
+                );
+            });
+        }
+
+        async function swapElements(i, j) {
+            const elements = document.getElementsByClassName('array-element');
+            const elementI = elements[i];
+            const elementJ = elements[j];
+
+            // Calculate distance between elements
+            const elementWidth = 50;
+            const gap = 5;
+            const distance = (j - i) * (elementWidth + gap);
+
+            // Apply moving animation
+            elementI.style.transform = `translateX(${distance}px)`;
+            elementJ.style.transform = `translateX(${-distance}px)`;
+
+            // Wait for animation to complete
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Perform actual swap
+            [array[i], array[j]] = [array[j], array[i]];
+
+            // Reset transforms and update visualization
+            elementI.style.transform = 'none';
+            elementJ.style.transform = 'none';
+            updateVisualization();
+        }
+
+
+        async function quickSort(start = 0, end = array.length - 1) {
+            if(start===0 && end===array.length-1){stopSorting();await sleep(2000)}
+            isSorting = true;
+            currentAlgorithm = 'quick';
+            showExplanation('quick');
+            if (start >= end) return;
+            let pivot = await partition(start, end);
+            if (isSorting) await quickSort(start, pivot - 1);
+            if (isSorting) await quickSort(pivot + 1, end);
+            if(start===0 && end===array.length-1)isSorting=false
+        }
+
+        async function partition(start, end) {
+            let pivotValue = array[end];
+            let pivotIndex = start;
+            for (let x = start; x <= end; x++) {
+                const pivotElement = document.getElementById(`element-${x}`);
+                pivotElement.classList.add('party');
+            }
+            // Highlight pivot
+            const pivotElement = document.getElementById(`element-${end}`);
+            pivotElement.classList.add('quick-pivot');
+
+            for (let j = start; j < end; j++) {
+                const currentElement = document.getElementById(`element-${j}`);
+                const boundaryElement = document.getElementById(`element-${pivotIndex}`);
+
+                // Highlight current element and boundary
+                currentElement.classList.add('quick-compare');
+                boundaryElement.classList.add('quick-boundary');
+
+                await delay();
+                if (!isSorting) break;
+                if (array[j] < pivotValue) {
+                    boundaryElement.classList.remove('quick-boundary');
+                    await swapElements(pivotIndex, j);
+                    const pivotElement = document.getElementById(`element-${end}`);
+                    pivotElement.classList.add('quick-pivot');
+                    for (let x = start; x <= end; x++) {
+                        const pivotElement = document.getElementById(`element-${x}`);
+                        pivotElement.classList.add('party');
+                    }
+                    pivotIndex++;
+                    document.getElementById(`element-${pivotIndex}`).classList.add('quick-boundary');
+                }
+
+                // Remove highlights
+                currentElement.classList.remove('quick-compare');
+                boundaryElement.classList.remove('quick-boundary');
+            }
+            await swapElements(pivotIndex, end);
+            // Remove boundary highlight and swap pivot
+            document.getElementById(`element-${pivotIndex}`).classList.remove('quick-boundary');
+
+            pivotElement.classList.remove('quick-pivot');
+            return pivotIndex;
+        }
+
+
+        async function merge(start, mid, end) {
+
+            // Highlight the entire merge range
+            for (let k = start; k <= end; k++) {
+                document.getElementById(`element-${k}`).classList.add('merging');
+            }
+            await delay();
+
+            let temp = [];
+            let i = start, j = mid + 1;
+
+            // Highlight left and right halves
+            for (let k = start; k <= mid; k++) {
+                document.getElementById(`element-${k}`).classList.add('merge-left');
+            }
+            for (let k = mid + 1; k <= end; k++) {
+                document.getElementById(`element-${k}`).classList.add('merge-right');
+            }
+            await delay();
+
+            while (i <= mid && j <= end) {
+                const leftElement = document.getElementById(`element-${i}`);
+                const rightElement = document.getElementById(`element-${j}`);
+
+                // Highlight current comparison
+                leftElement.classList.add('quick-compare');
+                rightElement.classList.add('quick-compare');
+                await delay();
+
+                if (array[i] <= array[j]) {
+                    temp.push(array[i]);
+                    i++;
+                } else {
+                    temp.push(array[j]);
+                    j++;
+                }
+
+                // Remove comparison highlights
+                leftElement.classList.remove('quick-compare');
+                rightElement.classList.remove('quick-compare');
+            }
+
+            // Add remaining elements with visualization
+            while (i <= mid) {
+                temp.push(array[i]);
+                document.getElementById(`element-${i}`).classList.add('quick-compare');
+                await delay();
+                document.getElementById(`element-${i}`).classList.remove('quick-compare');
+                i++;
+            }
+
+            while (j <= end) {
+                temp.push(array[j]);
+                document.getElementById(`element-${j}`).classList.add('quick-compare');
+                await delay();
+                document.getElementById(`element-${j}`).classList.remove('quick-compare');
+                j++;
+            }
+
+            // Visualize merging with color transition
+            for (let k = 0; k < temp.length; k++) {
+                const element = document.getElementById(`element-${start + k}`);
+                element.classList.add('sorted');
+                array[start + k] = temp[k];
+                updateVisualization();
+                await delay();
+                element.classList.remove('sorted');
+            }
+
+            // Cleanup all highlights
+            for (let k = start; k <= end; k++) {
+                const element = document.getElementById(`element-${k}`);
+                element.classList.remove('merge-left', 'merge-right', 'merging');
+            }
+            await delay();
+        }
+        // Modified Merge Sort implementation
+        async function mergeSort(start = 0, end = array.length - 1) {
+            
+            if(start===0 && end===array.length-1){stopSorting();await sleep(2000)}
+            isSorting=true;
+            currentAlgorithm = 'merge';
+            showExplanation('merge');
+            if (start >= end) return;
+            let mid = Math.floor((start + end) / 2);
+            await mergeSort(start, mid);
+            await mergeSort(mid + 1, end);
+            await merge(start, mid, end);
+            if(start===0 && end===array.length-1)isSorting=false
+        }
+
+
+    </script>
+</body>
+
+</html>
