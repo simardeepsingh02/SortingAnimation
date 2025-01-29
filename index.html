@@ -187,29 +187,43 @@
         const explanations = {
     bubble: `
         <h3>Bubble Sort</h3>
-        <p>Repeatedly steps through the list, compares adjacent elements, 
-        and swaps them if they are in the wrong order.</p>
-        <p>Time Complexity: O(n²)</p>
+        <p>A simple comparison-based algorithm that works by repeatedly swapping adjacent elements 
+        if they are in the wrong order. Each pass through the list "bubbles up" the largest remaining 
+        element to its correct position at the end.</p>
+        <p><strong>How it works:</strong><br>
+        1. Compare consecutive elements from left to right<br>
+        2. Swap elements if left is greater than right<br>
+        3. Repeat until no swaps are needed</p>
+        <p><strong>Best for:</strong> Small datasets, educational purposes</p>
+        <p><strong>Time Complexity:</strong> O(n²) worst & average case, O(n) best case (optimized version)</p>
         <pre><code class="java">public static void bubbleSort(int[] arr) {
     int n = arr.length;
+    boolean swapped;
     for (int i = 0; i < n-1; i++) {
+        swapped = false;
         for (int j = 0; j < n-i-1; j++) {
             if (arr[j] > arr[j+1]) {
                 // Swap elements
                 int temp = arr[j];
                 arr[j] = arr[j+1];
                 arr[j+1] = temp;
+                swapped = true;
             }
         }
+        if (!swapped) break; // Optimization
     }
 }</code></pre>
     `,
     selection: `
         <h3>Selection Sort</h3>
-        <p>Divides the input list into two parts: sorted and unsorted. 
-        Repeatedly selects the smallest element from the unsorted portion 
-        and moves it to the sorted portion.</p>
-        <p>Time Complexity: O(n²)</p>
+        <p>Maintains two subarrays: sorted (left) and unsorted (right). Repeatedly finds the minimum 
+        element in the unsorted subarray and swaps it with the leftmost unsorted element.</p>
+        <p><strong>How it works:</strong><br>
+        1. Find minimum element in unsorted subarray<br>
+        2. Swap it with first unsorted element<br>
+        3. Move subarray boundaries by one element to the right</p>
+        <p><strong>Best for:</strong> Small datasets, minimizing swaps</p>
+        <p><strong>Time Complexity:</strong> O(n²) in all cases</p>
         <pre><code class="java">public static void selectionSort(int[] arr) {
     int n = arr.length;
     for (int i = 0; i < n-1; i++) {
@@ -228,14 +242,21 @@
     `,
     insertion: `
         <h3>Insertion Sort</h3>
-        <p>Builds the final sorted array one item at a time by repeatedly 
-        inserting the next element into the proper position in the already-sorted portion.</p>
-        <p>Time Complexity: O(n²)</p>
+        <p>Builds the final sorted array one item at a time by iteratively inserting elements 
+        from the unsorted portion into their correct position in the sorted portion.</p>
+        <p><strong>How it works:</strong><br>
+        1. Start with first element as sorted subarray<br>
+        2. Pick next element from unsorted portion<br>
+        3. Shift sorted elements right to create insertion position<br>
+        4. Insert element into correct position</p>
+        <p><strong>Best for:</strong> Small datasets, nearly sorted data</p>
+        <p><strong>Time Complexity:</strong> O(n²) worst & average case, O(n) best case</p>
         <pre><code class="java">public static void insertionSort(int[] arr) {
     int n = arr.length;
     for (int i = 1; i < n; i++) {
         int key = arr[i];
         int j = i - 1;
+        /* Shift elements greater than key to the right */
         while (j >= 0 && arr[j] > key) {
             arr[j + 1] = arr[j];
             j--;
@@ -246,10 +267,15 @@
     `,
     quick: `
         <h3>Quick Sort</h3>
-        <p>Divide-and-conquer algorithm that selects a 'pivot' element and 
-        partitions the array around the pivot, placing smaller elements 
-        before it and larger elements after it.</p>
-        <p>Time Complexity: O(n log n) average case</p>
+        <p>A divide-and-conquer algorithm that selects a 'pivot' element and partitions 
+        the array into elements less than, equal to, and greater than the pivot. 
+        Recursively sorts the subarrays.</p>
+        <p><strong>How it works:</strong><br>
+        1. Choose pivot element (here: last element)<br>
+        2. Partition array around pivot<br>
+        3. Recursively sort left and right partitions</p>
+        <p><strong>Best for:</strong> Large datasets, general-purpose sorting</p>
+        <p><strong>Time Complexity:</strong> O(n log n) average case, O(n²) worst case</p>
         <pre><code class="java">public static void quickSort(int[] arr, int low, int high) {
     if (low < high) {
         int pi = partition(arr, low, high);
@@ -279,9 +305,14 @@ private static int partition(int[] arr, int low, int high) {
     `,
     merge: `
         <h3>Merge Sort</h3>
-        <p>Divide-and-conquer algorithm that divides the input array into 
-        two halves, sorts them recursively, and then merges the sorted halves.</p>
-        <p>Time Complexity: O(n log n)</p>
+        <p>A stable, divide-and-conquer algorithm that divides the array into halves, 
+        recursively sorts them, and merges the sorted halves to produce the final sorted array.</p>
+        <p><strong>How it works:</strong><br>
+        1. Divide array into two halves<br>
+        2. Recursively sort each half<br>
+        3. Merge sorted halves by comparing elements</p>
+        <p><strong>Best for:</strong> Large datasets, linked lists, external sorting</p>
+        <p><strong>Time Complexity:</strong> O(n log n) in all cases</p>
         <pre><code class="java">public static void mergeSort(int[] arr, int l, int r) {
     if (l < r) {
         int m = l + (r - l) / 2;
