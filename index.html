@@ -122,7 +122,7 @@
         }
 
         .array-element.quick-compare {
-            background-color: #FFC107 !important;
+            background-color: #ff0755 !important;
         }
 
         .array-element.quick-boundary {
@@ -131,11 +131,11 @@
 
         /* Merge Sort specific colors */
         .array-element.merge-left {
-            background-color: #f3b821 !important;
+            background-color: #f3b821 ;
         }
 
         .array-element.merge-right {
-            background-color: #4CAF50 !important;
+            background-color: #4CAF50 ;
         }
 
         .array-element.merging {
@@ -144,7 +144,7 @@
         }
 
         .array-element.sorted {
-            background-color: #8BC34A !important;
+            background-color: #88ce38 !important;
         }
 
         /* Explanation section */
@@ -356,6 +356,8 @@ private static void merge(int[] arr, int l, int m, int r) {
             });
         }
         function showExplanation(algorithm) {
+            if(algorithm=='none')document.getElementById('algorithmExplanation').innerHTML = ' ';
+            else
             document.getElementById('algorithmExplanation').innerHTML = explanations[algorithm];
         }
         function updateVisualization() {
@@ -369,6 +371,7 @@ private static void merge(int[] arr, int l, int m, int r) {
                 container.appendChild(element);
             });
             document.getElementById('arraySize').textContent = `Array Size: ${array.length}`;
+            
         }
 
         async function addElement() {
@@ -657,16 +660,18 @@ private static void merge(int[] arr, int l, int m, int r) {
 
             // Add remaining elements with visualization
             while (i <= mid) {
-                temp.push(array[i]);
                 document.getElementById(`element-${i}`).classList.add('quick-compare');
+
+                temp.push(array[i]);
                 await delay();
                 document.getElementById(`element-${i}`).classList.remove('quick-compare');
                 i++;
             }
 
             while (j <= end) {
-                temp.push(array[j]);
                 document.getElementById(`element-${j}`).classList.add('quick-compare');
+
+                temp.push(array[j]);
                 await delay();
                 document.getElementById(`element-${j}`).classList.remove('quick-compare');
                 j++;
@@ -674,12 +679,13 @@ private static void merge(int[] arr, int l, int m, int r) {
 
             // Visualize merging with color transition
             for (let k = 0; k < temp.length; k++) {
-                const element = document.getElementById(`element-${start + k}`);
-                element.classList.add('sorted');
+                let x=start+k;
+                document.getElementById(`element-${x}`).classList.add('quick-compare');
+                
                 array[start + k] = temp[k];
                 updateVisualization();
                 await delay();
-                element.classList.remove('sorted');
+                document.getElementById(`element-${(start + k)}`).classList.remove('quick-compare');
             }
 
             // Cleanup all highlights
