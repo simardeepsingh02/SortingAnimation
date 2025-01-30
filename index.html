@@ -6,26 +6,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sorting Algorithm Visualizer</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --highlight-color: #ff9800;
+            --swap-color: #e91e63;
+            --pivot-color: #4CAF50;
+            --background-color: #f0f0f0;
+            --text-color: #333;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
-            padding: 20px;
-            background-color: #f0f0f0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            padding: 1rem;
+            background-color: var(--background-color);
+            color: var(--text-color);
         }
 
         .navbar {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
         }
 
         .navbar button {
-            padding: 10px 20px;
-            cursor: pointer;
-            background-color: #4CAF50;
+            flex: 1 1 120px;
+            padding: 0.8rem;
+            font-size: 0.9rem;
+            background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
         .navbar button:hover {
@@ -33,150 +54,232 @@
         }
 
         .controls {
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .controls input {
+            flex: 1 1 100px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .controls button {
+            flex: 1 1 120px;
+            padding: 0.5rem 1rem;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #arraySize {
+            flex: 1 1 100%;
+            text-align: center;
+            margin-top: 0.5rem;
         }
 
         .array-container {
             display: flex;
-            gap: 5px;
             flex-wrap: wrap;
+            gap: 0.3rem;
+            justify-content: center;
+            max-width: 100%;
+            overflow-x: auto;
+            padding: 0.5rem 0;
         }
 
         .array-element {
-            width: 50px;
-            height: 50px;
-            background-color: #2196F3;
+            min-width: 3rem;
+            height: 3rem;
+            background-color: var(--secondary-color);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 4px;
-            transition: all 0.3s ease, transform 0.5s ease;
-            position: relative;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
         }
 
-        .array-element.active {
-            background-color: #ff9800;
-        }
-
-        .array-element.swap {
-            background-color: #e91e63;
-        }
-
-        .array-element.pivot {
-            background-color: #4CAF50;
-        }
-
-        .array-element.active.bubble-active {
-            background-color: #ffeb3b;
-        }
-
-        .array-element.active.selection-active {
-            background-color: #21f341;
-        }
-
-        .array-element.active.selection-activepoint {
-            background-color: #f37921;
-        }
-
-        .array-element.active.selection-activeselect {
-            background-color: #e0e055;
-        }
-
-        .array-element.active.insertion-active {
-            background-color: #9c27b0;
-        }
-
-        .array-element.active.insertion-activepoint {
-            background-color: #f37921;
-        }
-
-        .array-element.active.insertion-activeselect {
-            background-color: #55e065;
-        }
-
-        .array-element.active.quick-active {
-            background-color: #4CAF50;
-        }
-
-        .array-element.active.merge-active {
-            background-color: #f44336;
-        }
-
-        .array-element.swap {
-            background-color: #e91e63 !important;
-        }
-
-        .array-element.pivot {
-            background-color: #4CAF50 !important;
-        }
-
-        .array-element.quick-pivot {
-            background-color: #4CAF50 !important;
-            transform: scale(1.2);
-        }
-
-        .array-element.party {
-            background-color: #af4c59;
-
-        }
-
-        .array-element.quick-compare {
-            background-color: #ff0755 !important;
-        }
-
-        .array-element.quick-boundary {
-            background-color: #9C27B0 !important;
-        }
-
-        /* Merge Sort specific colors */
-        .array-element.merge-left {
-            background-color: #f3b821 ;
-        }
-
-        .array-element.merge-right {
-            background-color: #4CAF50 ;
-        }
-
-        .array-element.merging {
-            border: 3px solid #ff5722;
-            box-sizing: border-box;
-        }
-
-        .array-element.sorted {
-            background-color: #88ce38 !important;
-        }
-
-        /* Explanation section */
         .explanation {
-            margin-top: 20px;
-            padding: 15px;
+            margin-top: 1.5rem;
+            padding: 1rem;
             background-color: white;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .explanation pre {
+            background: #f4f4f4;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .explanation code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+        }
+        /* Color States */
+        .array-element.active { background-color: var(--highlight-color); }
+        .array-element.swap { background-color: var(--swap-color); }
+        .array-element.pivot { background-color: var(--pivot-color); }
+        .array-element.quick-pivot { transform: scale(1.1); }
+        .array-element.merging { border: 2px solid #ff0202; } /* Orange */
+
+.array-element.sorted { background-color: #4CAF50 !important; } /* Green */
+
+/* Bubble Sort */
+.array-element.active.bubble-active {
+    background-color: #caac00; /* Gold */
+}
+
+/* Selection Sort */
+.array-element.active.selection-active {
+    background-color: #00C853; /* Emerald Green */
+}
+
+.array-element.active.selection-activepoint {
+    background-color: #ff3939; /* Deep Orange */
+}
+
+.array-element.active.selection-activeselect {
+    background-color: #FFC107; /* Amber */
+}
+
+/* Insertion Sort */
+.array-element.active.insertion-active {
+    background-color: #46ff46; /* Deep Purple */
+}
+
+.array-element.active.insertion-activepoint {
+    background-color: #D84315; /* Rust Orange */
+}
+
+.array-element.active.insertion-activeselect {
+    background-color: #66BB6A; /* Soft Green */
+}
+
+/* Quick Sort */
+.array-element.active.quick-active {
+    background-color: #2196F3; /* Bright Blue */
+}
+
+.array-element.pivot {
+    background-color: #673AB7 !important; /* Deep Purple */
+}
+
+.array-element.quick-pivot {
+    background-color: #50259b !important;
+    transform: scale(1.2);
+}
+
+.array-element.quick-compare {
+    opacity: 50% !important; /* Pink */
+}
+
+.array-element.quick-boundary {
+    background-color: #aea277 !important; /* Dark Purple */
+}
+
+/* Merge Sort */
+.array-element.active.merge-active {
+    background-color: #D32F2F; /* Red */
+}
+
+.array-element.merge-left {
+    background-color: #d9e717; /* Bright Orange */
+}
+
+.array-element.merge-right {
+    background-color: #ff2ec0; /* Green */
+}
+
+/* Swap */
+.array-element.swap {
+    background-color: #F44336 !important; /* Bright Red */
+}
+
+/* Misc */
+.array-element.party {
+    background-color: #AB47BC; /* Purple */
+}
+
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+                font-size: 14px;
+            }
+
+            .navbar {
+                gap: 0.3rem;
+            }
+
+            .navbar button {
+                font-size: 0.8rem;
+                padding: 0.6rem;
+            }
+
+            .array-element {
+                min-width: 2.5rem;
+                height: 2.5rem;
+                font-size: 0.8rem;
+            }
+
+            .controls input,
+            .controls button {
+                font-size: 0.8rem;
+            }
+
+            pre code {
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .array-element {
+                min-width: 2rem;
+                height: 2rem;
+                font-size: 0.7rem;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="navbar">
+    <nav class="navbar">
         <button onclick="bubbleSort()">Bubble Sort</button>
         <button onclick="selectionSort()">Selection Sort</button>
         <button onclick="insertionSort()">Insertion Sort</button>
         <button onclick="quickSort()">Quick Sort</button>
         <button onclick="mergeSort()">Merge Sort</button>
-    </div>
+    </nav>
 
+    <!-- Controls -->
     <div class="controls">
-        <input type="number" id="arrayElement" min="1" max="100">
+        <input type="number" id="arrayElement" min="1" max="100" placeholder="Enter number" onkeypress="handleEnterKey(event)">
         <button onclick="addElement()">Add Element</button>
+        <button onclick="removeElement()">Remove Element</button>
         <button onclick="generateRandom()">Generate Random</button>
         <button onclick="resetArray()">Reset</button>
         <span id="arraySize"></span>
     </div>
 
+    <!-- Visualization -->
     <div id="visualization" class="array-container"></div>
+
+    <!-- Explanation -->
     <div class="explanation" id="algorithmExplanation"></div>
+
 
     <script>
         let array = [];
@@ -373,17 +476,27 @@ private static void merge(int[] arr, int l, int m, int r) {
             document.getElementById('arraySize').textContent = `Array Size: ${array.length}`;
             
         }
-
+        function handleEnterKey(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        addElement();
+    }
+}
+        // Modified addElement function
         async function addElement() {
             stopSorting();
-            await sleep(1000)
-
+            await sleep(1000);
             isSorting = false;
+            
             if (array.length >= maxSize) return;
-            const value = parseInt(document.getElementById('arrayElement').value);
+            
+            const input = document.getElementById('arrayElement');
+            const value = parseInt(input.value);
+            
             if (!isNaN(value)) {
                 array.push(value);
                 updateVisualization();
+                input.value = ''; // Clear input after adding
             }
         }
 
@@ -398,12 +511,31 @@ private static void merge(int[] arr, int l, int m, int r) {
             updateVisualization();
         }
 
-        function resetArray() {
-            array = [];
-            currentAlgorithm = 'none';
-            showExplanation('none');
-            updateVisualization();
-        }
+        async function removeElement() {
+    stopSorting();
+    await sleep(1000);
+    isSorting = false;
+    
+    if (array.length > 0) {
+        array.pop(); // Remove last element
+        updateVisualization();
+    }
+    
+    // Clear explanation if array is empty
+    if (array.length === 0) {
+        currentAlgorithm = 'none';
+        showExplanation('none');
+    }
+}
+
+// Modified resetArray to clear input
+function resetArray() {
+    array = [];
+    currentAlgorithm = 'none';
+    showExplanation('none');
+    document.getElementById('arrayElement').value = '';
+    updateVisualization();
+}
 
         function delay() {
             return new Promise(resolve => setTimeout(resolve, delayTime));
@@ -558,8 +690,8 @@ private static void merge(int[] arr, int l, int m, int r) {
 
 
         async function quickSort(start = 0, end = array.length - 1) {
-            if(start===0 && end===array.length-1){stopSorting();await sleep(2000)}
-            isSorting = true;
+            if(start===0 && end===array.length-1){stopSorting();await sleep(2000);isSorting = true;}
+            
             currentAlgorithm = 'quick';
             showExplanation('quick');
             if (start >= end) return;
@@ -581,6 +713,7 @@ private static void merge(int[] arr, int l, int m, int r) {
             pivotElement.classList.add('quick-pivot');
 
             for (let j = start; j < end; j++) {
+                if (!isSorting) break;
                 const currentElement = document.getElementById(`element-${j}`);
                 const boundaryElement = document.getElementById(`element-${pivotIndex}`);
 
@@ -589,8 +722,9 @@ private static void merge(int[] arr, int l, int m, int r) {
                 boundaryElement.classList.add('quick-boundary');
 
                 await delay();
-                if (!isSorting) break;
+                
                 if (array[j] < pivotValue) {
+                    if (!isSorting) break;
                     boundaryElement.classList.remove('quick-boundary');
                     await swapElements(pivotIndex, j);
                     const pivotElement = document.getElementById(`element-${end}`);
@@ -617,7 +751,7 @@ private static void merge(int[] arr, int l, int m, int r) {
 
 
         async function merge(start, mid, end) {
-
+            if (!isSorting) return;
             // Highlight the entire merge range
             for (let k = start; k <= end; k++) {
                 document.getElementById(`element-${k}`).classList.add('merging');
@@ -637,9 +771,10 @@ private static void merge(int[] arr, int l, int m, int r) {
             await delay();
 
             while (i <= mid && j <= end) {
+                if (!isSorting) break;
                 const leftElement = document.getElementById(`element-${i}`);
                 const rightElement = document.getElementById(`element-${j}`);
-
+                
                 // Highlight current comparison
                 leftElement.classList.add('quick-compare');
                 rightElement.classList.add('quick-compare');
@@ -660,6 +795,7 @@ private static void merge(int[] arr, int l, int m, int r) {
 
             // Add remaining elements with visualization
             while (i <= mid) {
+                if (!isSorting) break;
                 document.getElementById(`element-${i}`).classList.add('quick-compare');
 
                 temp.push(array[i]);
@@ -669,6 +805,7 @@ private static void merge(int[] arr, int l, int m, int r) {
             }
 
             while (j <= end) {
+                if (!isSorting) break;
                 document.getElementById(`element-${j}`).classList.add('quick-compare');
 
                 temp.push(array[j]);
@@ -679,6 +816,7 @@ private static void merge(int[] arr, int l, int m, int r) {
 
             // Visualize merging with color transition
             for (let k = 0; k < temp.length; k++) {
+                if (!isSorting) break;
                 let x=start+k;
                 document.getElementById(`element-${x}`).classList.add('quick-compare');
                 
@@ -690,6 +828,7 @@ private static void merge(int[] arr, int l, int m, int r) {
 
             // Cleanup all highlights
             for (let k = start; k <= end; k++) {
+                if (!isSorting) break;
                 const element = document.getElementById(`element-${k}`);
                 element.classList.remove('merge-left', 'merge-right', 'merging');
             }
@@ -698,8 +837,7 @@ private static void merge(int[] arr, int l, int m, int r) {
         // Modified Merge Sort implementation
         async function mergeSort(start = 0, end = array.length - 1) {
             
-            if(start===0 && end===array.length-1){stopSorting();await sleep(2000)}
-            isSorting=true;
+            if(start===0 && end===array.length-1){stopSorting();await sleep(2000);isSorting = true;}
             currentAlgorithm = 'merge';
             showExplanation('merge');
             if (start >= end) return;
