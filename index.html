@@ -287,10 +287,44 @@
                 font-size: 0.7rem;
             }
         }
+        .rotate-text-container {
+            background-color: black;
+            width: 100%;
+            padding: 5px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .rotate-text {
+            font-size: 0.7rem;  /* Smaller text */
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            font-size: 0.7rem;  /* Smaller text */
+
+            padding: 5px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
+
     </style>
 </head>
 
 <body>
+    <div class="rotate-text-container">
+        <div class="rotate-text">  Please Follow My Instagram <strong>@dsa_and_dev</strong> and youtube <strong>@dsa_n_dev</strong>       </div>
+    </div>
     <div class="heading">
         Sorting Algorithm Visualizer
         <div class="message">*please refresh if there is any error</div>
@@ -318,7 +352,9 @@
 
     <!-- Explanation -->
     <div class="explanation" id="algorithmExplanation"></div>
-
+    <footer>
+        &copy; 2025 All Rights Reserved
+    </footer>
 
     <script>
         let array = [];
